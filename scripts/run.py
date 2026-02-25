@@ -69,7 +69,7 @@ def main():
         json.dump(results, f, indent=4)
     
     print(f"\nExperiments complete; results saved to {results_path}.")
-    print("Now please run `scripts/plot_results.py` to generate figures.")
+    print("Now please run `scripts/plot.py` to generate figures.")
 
 if __name__ == "__main__":
     main()

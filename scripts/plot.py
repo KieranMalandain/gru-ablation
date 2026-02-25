@@ -31,8 +31,9 @@ def plot_academic_results(results, save_dir='./docs/report/figures'):
     ax.set_title('s-CIFAR-10 (T=1024) Test Accuracy vs. Epochs', pad=15, fontweight='bold')
     ax.set_xlabel('Training Epoch')
     ax.set_ylabel('Classification Accuracy')
-    ax.set_ylim([0.05, 0.45])
-    ax.set_xticks(epochs)
+    ax.set_ylim([0.00, 0.55])
+    ax.set_xticks(range(0,41,5))
+    ax.tick_params(axis='x', labelsize=10)
     ax.grid(True, linestyle=':', alpha=0.7)
     ax.legend(loc='lower right', framealpha=0.9)
     
@@ -51,7 +52,8 @@ def plot_academic_results(results, save_dir='./docs/report/figures'):
     ax.set_title('s-CIFAR-10 Training Loss Landscape', pad=15, fontweight='bold')
     ax.set_xlabel('Training Epoch')
     ax.set_ylabel('Cross Entropy Loss')
-    ax.set_xticks(epochs)
+    ax.set_xticks(range(0,41,5))
+    ax.tick_params(axis='x', labelsize=10)
     ax.grid(True, linestyle=':', alpha=0.7)
     ax.legend(loc='upper right', framealpha=0.9)
     
