@@ -16,14 +16,14 @@ def main():
         device = torch.device('mps')
     else:
         device = torch.device('cpu')
-    print("Running on {device}.")
+    print(f"Running on {device}.")
 
     # hyperparams
-    EPOCHS = 10
+    EPOCHS = 40
     BATCH_SIZE = 128
-    LEARNING_RATE = 1e-3
+    LEARNING_RATE = 5e-4
 
-    os.makedirs('../docs/report', exist_ok=True)
+    os.makedirs('./docs/report', exist_ok=True)
 
     print("\n=====| Loading s-CIFAR-10 Data |=====\n")
     train_loader, test_loader = get_scifar10_dataloaders(batch_size=BATCH_SIZE)
@@ -64,7 +64,7 @@ def main():
     )
     results['ablated'] = ablated_history
 
-    results_path = '../docs/report/results.json'
+    results_path = './docs/report/results.json'
     with open(results_path, 'w') as f:
         json.dump(results, f, indent=4)
     

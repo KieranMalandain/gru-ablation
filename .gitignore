@@ -15,10 +15,5 @@ __pycache__/
 # VSCode settings
 .vscode/
 
-# Data files - IMPORTANT!
+# Data files
 data/
-*.grib
-*.nc
-
-*.log
-experiment_outputs/

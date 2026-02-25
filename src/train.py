@@ -77,7 +77,8 @@ def train_model(
         learning_rate: float = 1e-3
 ):
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
+    optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-5)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-5)
 
     history = {
         'train_loss': [], 
@@ -94,6 +95,7 @@ def train_model(
 
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
         test_loss, test_acc = evaluate(model, test_loader, criterion, device)
+        scheduler.step()
 
         end_time = time.time()
         epoch_time = end_time - start_time
@@ -103,9 +105,10 @@ def train_model(
         history['test_loss'].append(test_loss)
         history['test_acc'].append(test_acc)
         history['epoch_times'].append(epoch_time)
-        
+
+        current_lr = scheduler.get_last_lr()[0]
         print(f"Epoch [{epoch+1}/{epochs}] | "
-              f"Time: {epoch_time:.1f}s | "
+              f"Time: {epoch_time:.1f}s | LR: {current_lr:.2e} | "
               f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.4f} | "
               f"Test Loss: {test_loss:.4f} | Test Acc: {test_acc:.4f}")
               
