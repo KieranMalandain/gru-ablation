@@ -1,16 +1,16 @@
 name: great_sky_gru
 channels:
   - pytorch
-  - nvidia
+  - conda-forge
   - defaults
 dependencies:
   - python=3.10
-  - pip
+  - pytorch::pytorch
+  - torchvision
+  - torchaudio
   - numpy
   - matplotlib
   - tqdm
-  - pytorch
-  - torchvision
-  - torchaudio
+  - pip
   - pip:
     - torchmetrics
