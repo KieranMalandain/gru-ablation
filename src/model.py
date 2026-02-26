@@ -21,9 +21,6 @@ class sCIFAR10_GRU(nn.Module):
         self._initialize_weights()
 
     def _initialize_weights(self):
-        """
-        Come back to this here.
-        """
         for name, param in self.gru.named_parameters():
             if 'weight_hh' in name:
                 # prevents grad problems by ensuring eigenvalues are ~1
@@ -36,17 +33,20 @@ class sCIFAR10_GRU(nn.Module):
                 param.data.fill_(0.)
 
                 if not self.ablate_biases:
-                    # 
+                    # implements chrono init.
                     update_bias_start = self.hidden_size
                     update_bias_end = 2 * self.hidden_size
-                    param.data[update_bias_start:update_bias_end].fill_(1.)
+                    T_max = 1024
+                    u = torch.empty(self.hidden_size).uniform_(1, T_max - 1)
+                    chrono_biases = torch.log(u)
+                    param.data[update_bias_start:update_bias_end] = chrono_biases
         
         if self.ablate_biases:
             self._apply_bias_ablation_hooks()
         
     def _apply_bias_ablation_hooks(self):
         """
-        
+        Stops gradients updating for b_z and b_r, which holds their init. values
         """
         for name, param in self.gru.named_parameters():
             if 'bias' in name:
