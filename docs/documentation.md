@@ -64,9 +64,11 @@ The hidden state $h_t$ is repeatedly multiplied by $W_{hh}$ over the 1024 steps.
 If the values of our weights are too large, passing a signal $x$ through a linear layer $y=Wx$ causes the variance of $y$ to become massive. We therefore risk passing huge values into our activation functions (`tanh` or `sigmoid`), which pushes them to their asymptotes (either -1, 0, or 1). The effect of this is that the gradients of the activation functions at these asymptotes is 0, and so this saturation problem causes the gradients to immediately die.
 
 We instead apply a Xavier initialization to our input-to-hidden weights $W_{ih}$, so that our single pixel input enters the GRU without saturating the gates. Xavier sets the weights by drawing from a distribution:
+
 $$
 w \sim \mathcal{U} \left( - \sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}, + \sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}} \right),
 $$
+
 where $w$ is a shorthand for each individual entry to the weight matrix $W_{ih}$. The bound ensures that the variance of the input signal is preserved as it passes through the weights and into the hidden state.
 
 ### Baseline Bias Initialization
@@ -100,7 +102,7 @@ $$
 * An initialization of $b_z=0.0$ gives $z_t \approx 1/(1+e^0) = 0.5$. A 50\% decay over 1024 steps causes catastrophic forgetting.
 * An initialization of $b_z=1.0$ gives $z_t \approx 1/(1+e^{-1}) \approx 0.731$. Therefore, we keep \~73\% of the old memory and mathematically bias the network to remember. This chrono-initialization lengthens the time-constant of the memory gates, which allows gradients to flow back to $t=1$ in the first epoch, and the net can then learn to fine-tune this bias.
 
-*Note on Chrono-Initialization:* We empirically tested true Chrono-Initialization ($b_z \sim \log(\mathcal{U}[1, 1024])$) as proposed in the literature. However, this yielded catastrophic gradient saturation. Because the GRU update gate dictates both memory and input weighting simultaneously ($z_t$ and $1-z_t$), biases averaging $+6.2$ caused the network to permanently ignore new inputs ($z_t=\sigma(6.2) \approx 0.998$). The $+1.0$ uniform initialization is a better choice for preserving BPTT gradients while maintaining input sensitivity.
+*Note on Chrono-Initialization:* We empirically tested true Chrono-Initialization ($b_z\sim\log(U[1, 1024])$) as proposed in the literature. However, this yielded catastrophic gradient saturation. Because the GRU update gate dictates both memory and input weighting simultaneously ($z_t$ and $1-z_t$), biases averaging $+6.2$ caused the network to permanently ignore new inputs ($z_t=\sigma(6.2) \approx 0.998$). The $+1.0$ uniform initialization is a better choice for preserving BPTT gradients while maintaining input sensitivity.
 
 ## 4. Ablation Implementation (`src/model.py`)
 
