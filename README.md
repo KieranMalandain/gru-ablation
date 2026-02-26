@@ -4,7 +4,7 @@
 
 This repo contains an ablation study of the Gated Recurrent Unit (GRU) architecture in PyTorch (`torch`), prepared as part of the interview process for Great Sky Inc. The objective is **to evaluate the impact of gate biases on a recurrent network's ability to maintain long-range context over extended temporal sequences.** Great Sky is innovating neuromorphic computing based on **S**uperconducting **O**pto**e**lectronic **N**etworks (SOENs), and continuous-time RNNs are the natural software solution for the physical architecture they are developing. RNNs maintain a hidden state $h_t$ that evolves over time, and the Great Sky hardware allows the state to be _physically_ resident in the circulating current of the loops; in this way, the memory is the processor---there is no separation between compute and memory.
 
-To isolate the temporal memory capacity, we use the **Sequential CIFAR-10** (s-CIFAR-10) benchmark. We flatten the $32\times32$ grayscale images into 1024-step 1D sequences (dim: $(32, 32) \to (1024,)$). The model is forced to remember spatial features from $t=1$ to $t=1024$ in order to make a correct classification.
+To isolate the temporal memory capacity, we use the **Sequential CIFAR-10** (s-CIFAR-10) benchmark. We flatten the $32\times32$ grayscale images into 1024-step 1D sequences (dim: $`(32,32)\rightarrow(1024,)`$). The model is forced to remember spatial features from $t=1$ to $t=1024$ in order to make a correct classification.
 
 ## The Physical \& Mathematical Hypothesis
 

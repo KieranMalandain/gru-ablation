@@ -102,7 +102,7 @@ $$
 * An initialization of $b_z=0.0$ gives $z_t \approx 1/(1+e^0) = 0.5$. A 50\% decay over 1024 steps causes catastrophic forgetting.
 * An initialization of $b_z=1.0$ gives $z_t \approx 1/(1+e^{-1}) \approx 0.731$. Therefore, we keep \~73\% of the old memory and mathematically bias the network to remember. This chrono-initialization lengthens the time-constant of the memory gates, which allows gradients to flow back to $t=1$ in the first epoch, and the net can then learn to fine-tune this bias.
 
-*Note on Chrono-Initialization:* We empirically tested true Chrono-Initialization ($b_z\sim\log(U[1, 1024])$) as proposed in the literature. However, this yielded catastrophic gradient saturation. Because the GRU update gate dictates both memory and input weighting simultaneously ($z_t$ and $1-z_t$), biases averaging $+6.2$ caused the network to permanently ignore new inputs ($z_t=\sigma(6.2) \approx 0.998$). The $+1.0$ uniform initialization is a better choice for preserving BPTT gradients while maintaining input sensitivity.
+*Note on Chrono-Initialization:* We empirically tested true Chrono-Initialization ($`b_z\sim\log(\mathcal{U}[1, 1024])`$) as proposed in the literature. However, this yielded catastrophic gradient saturation. Because the GRU update gate dictates both memory and input weighting simultaneously ($z_t$ and $1-z_t$), biases averaging $+6.2$ caused the network to permanently ignore new inputs ($z_t=\sigma(6.2) \approx 0.998$). The $+1.0$ uniform initialization is a better choice for preserving BPTT gradients while maintaining input sensitivity.
 
 ## 4. Ablation Implementation (`src/model.py`)
 
