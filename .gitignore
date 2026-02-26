@@ -17,6 +17,3 @@ __pycache__/
 
 # Data files
 data/
-
-# Old files
-*_old.*

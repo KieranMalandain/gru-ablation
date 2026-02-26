@@ -33,13 +33,10 @@ class sCIFAR10_GRU(nn.Module):
                 param.data.fill_(0.)
 
                 if not self.ablate_biases:
-                    # implements chrono init.
+                    # 
                     update_bias_start = self.hidden_size
                     update_bias_end = 2 * self.hidden_size
-                    T_max = 1024
-                    u = torch.empty(self.hidden_size).uniform_(1, T_max - 1)
-                    chrono_biases = torch.log(u)
-                    param.data[update_bias_start:update_bias_end] = chrono_biases
+                    param.data[update_bias_start:update_bias_end].fill_(1.)
         
         if self.ablate_biases:
             self._apply_bias_ablation_hooks()
