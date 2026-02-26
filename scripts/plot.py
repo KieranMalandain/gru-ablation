@@ -60,6 +60,26 @@ def plot_academic_results(results, save_dir='./docs/report/figures'):
     plt.tight_layout()
     plt.savefig(os.path.join(save_dir, 'training_loss_comparison.png'))
     plt.close()
+
+    # Test loss
+    fig, ax = plt.subplots(figsize=(8, 5))
+    
+    ax.plot(epochs, results['baseline']['test_loss'], label='Baseline (Learnable Biases)', 
+            color='#1f77b4', marker='o', markersize=6)
+    ax.plot(epochs, results['ablated']['test_loss'], label='Ablated (Frozen Biases)', 
+            color='#d62728', marker='s', markersize=6, linestyle='--')
+    
+    ax.set_title('s-CIFAR-10 Test Loss Landscape', pad=15, fontweight='bold')
+    ax.set_xlabel('Training Epoch')
+    ax.set_ylabel('Cross Entropy Loss')
+    ax.set_xticks(range(0,41,5))
+    ax.tick_params(axis='x', labelsize=10)
+    ax.grid(True, linestyle=':', alpha=0.7)
+    ax.legend(loc='upper right', framealpha=0.9)
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_dir, 'test_loss_comparison.png'))
+    plt.close()
     
     print(f"Figures successfully generated in {save_dir}")
 

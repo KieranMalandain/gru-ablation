@@ -4,7 +4,7 @@
 
 This repo contains an ablation study of the Gated Recurrent Unit (GRU) architecture in PyTorch (`torch`), prepared as part of the interview process for Great Sky Inc. The objective is **to evaluate the impact of gate biases on a recurrent network's ability to maintain long-range context over extended temporal sequences.** Great Sky is innovating neuromorphic computing based on **S**uperconducting **O**pto**e**lectronic **N**etworks (SOENs), and continuous-time RNNs are the natural software solution for the physical architecture they are developing. RNNs maintain a hidden state $h_t$ that evolves over time, and the Great Sky hardware allows the state to be _physically_ resident in the circulating current of the loops; in this way, the memory is the processor---there is no separation between compute and memory.
 
-To isolate the temporal memory capacity, we use the **Sequential CIFAR-10** (s-CIFAR-10) benchmark. We flatten the $32\times32$ grayscale images into 1024-step 1D sequences (dim: $(32, 32) \longrightarrow (1024,)$) the model is forced to remember spatial features from $t=1$ to $t=1024$ in order to make a correct classification.
+To isolate the temporal memory capacity, we use the **Sequential CIFAR-10** (s-CIFAR-10) benchmark. We flatten the $32\times32$ grayscale images into 1024-step 1D sequences (dim: $(32, 32) \longrightarrow (1024,)$). The model is forced to remember spatial features from $t=1$ to $t=1024$ in order to make a correct classification.
 
 ## The Physical \& Mathematical Hypothesis
 
@@ -14,7 +14,7 @@ $$
 h_t = (1 - z_t) \odot n_t + z_t \odot h_{t-1},
 $$
 
-where $z_t \in [0,1]$ is the _update gate_ and $n_t$ is the candidate update state, defined:
+where $z_t \in [0,1]$ is the _update gate_ and $n_t$ is the candidate update state, defined as:
 
 $$
 n_t = \tanh(W_{in}x_t + b_{in} + r_t \odot (W_{hn}h_{t-1} + b_{hn})).
@@ -24,35 +24,36 @@ See the [PyTorch docs on GRU](https://docs.pytorch.org/docs/stable/generated/tor
 
 ### The Ablation
 
-We compare a baseline GRU, with fully learnable biases, against an ablated GRU where the biases for the update ($b_{in}$ and reset ($h_{hb}$) are frozen at exactly 0.0.
+We compare a baseline GRU, with fully learnable biases, against an ablated GRU where the biases for the update gate ($b_{iz}, b_{hz}$) and reset gate ($b_{ir}, b_{hr}$) are mathematically frozen at exactly `0.0` during the backward pass. The candidate state biases ($b_{in}, b_{hn}$) remain fully learnable in both models.
 
 ### The Rationale
 
-Without a learned bias to push the pre-activation of the update gate $z_t$ towards positive values, $z_t$ defaults to $\sigma(0) = 0.5$. A continous 50\% decay over 1024 timestamps yields, clearly, $0.5^{1024} \approx 0$. The result of this will be catastrophic forgetting and vanishing gradients. The baseline model, on the other hand, can learn to keep the update gate _closed_ (by learning a positive bias), thereby simulating a longer phyiscal time-constant for memory retention.
+Without a learned bias to push the pre-activation of the update gate $z_t$ towards positive values, $z_t$ defaults to $\sigma(0) = 0.5$. A continuous 50\% decay over 1024 timesteps yields, clearly, $0.5^{1024} \approx 0$. The result of this will be catastrophic forgetting and vanishing gradients. The baseline model, on the other hand, can learn to keep the update gate _closed_ (by learning a positive bias), thereby simulating a longer physical time-constant for memory retention.
 
 ## Project Structure
 
-```
-great-sky-gru-ablation/
+```text
+gru-ablation-malandain/
 ├── README.md                 # High-level overview, setup, and run instructions
 ├── environment.yml           # Conda environment definition for exact reproducibility
-├── .gitignore                # Specifies certain files not included, notably the data and the outputs
-├── data/                     # Directory where CIFAR-10 data will be downloaded by `src\data.py`
+├── .gitignore                # Specifies ignored files (data, outputs, pycache)
+├── data/                     # Directory where CIFAR-10 data is downloaded
 ├── docs/
-│   ├── documentation.md      # Extended technical notes, logging details, etc.
+│   ├── documentation.md      # Extended technical notes, mathematical proofs, etc.
 │   └── report/
-│       ├── main.tex          # The LaTeX document
+│       ├── main.tex          # The LaTeX document source
+│       ├── report.pdf        # The final compiled IEEE-format report
 │       ├── references.bib    # Citations
 │       └── figures/          # Automatically populated by the plotting script
 ├── scripts/
-│   ├── run_experiment.py     # Main entry point: runs baseline and ablated training
-│   └── plot_results.py       # Generates plots for the LaTeX report
+│   ├── run.py                # Main entry point: runs baseline and ablated training
+│   └── plot.py               # Generates plots for the LaTeX report
 └── src/
     ├── __init__.py
     ├── data.py               # s-CIFAR-10 PyTorch Dataset and DataLoader transforms
-    ├── model.py              # The GRU architectures (Custom implemention for tracking)
+    ├── model.py              # The GRU architectures (with custom autograd hooks)
     ├── train.py              # Training loop, evaluation loop, and gradient tracking
-    └── utils.py              # Parameter counting, logging, and seed setting
+    └── utils.py              # Parameter counting, logging, and deterministic seeding
 ```
 
 *Note: Project Structure generated by Gemini 3.1 Pro.*
